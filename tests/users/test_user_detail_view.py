@@ -1,9 +1,10 @@
 from rest_framework.test import APITestCase
 from rest_framework.views import status
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from tests.factories import create_user_with_token
-
+import ipdb
 
 User: AbstractUser = get_user_model()
 
@@ -205,6 +206,7 @@ class UserDetailViewsTest(APITestCase):
             "password": "lucira1234!@@@3"
         }
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.access_token_1)
+       
         response = self.client.patch(self.BASE_URL, data=info_to_patch, format="json")
 
         # STATUS CODE
@@ -232,7 +234,7 @@ class UserDetailViewsTest(APITestCase):
         )
         self.assertDictEqual(expected_data, resulted_data, msg)
 
-        user = User.objects.last()
+        user = User.objects.first()
         msg = (
             f"Verifique se a senha está sendo atualizada no {response.request['REQUEST_METHOD']} em "
             + f"em `{self.BASE_URL}`"

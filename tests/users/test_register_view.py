@@ -1,8 +1,9 @@
 from rest_framework.test import APITestCase
 from rest_framework.views import status
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
-
+import ipdb
 
 User: AbstractUser = get_user_model()
 
@@ -28,6 +29,7 @@ class UserRegistrationViewTest(APITestCase):
             "last_name",
         }
         returned_fields = set(resulted_data.keys())
+    
         msg = "Verifique se todas as chaves obrigatórias são retornadas ao tentar criar um usuário sem dados"
         self.assertSetEqual(expected_fields, returned_fields, msg)
 
@@ -37,7 +39,7 @@ class UserRegistrationViewTest(APITestCase):
         msg = (
             "Verifique se o status code retornado do POST sem todos os campos obrigatórios "
             + f"em `{self.BASE_URL}` é {expected_status_code}"
-        )
+        ) 
         self.assertEqual(expected_status_code, resulted_status_code, msg)
 
     def test_user_creation(self):

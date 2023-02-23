@@ -4,30 +4,19 @@ from .serializers import AlbumSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.generics import ListAPIView, CreateAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from users.models import User
+import ipdb
 
 
-class AlbumView(APIView, PageNumberPagination):
+class AlbumViewGenerics(ListAPIView, CreateAPIView):
+    queryset = Album.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = AlbumSerializer
 
-    def get(self, request):
-        """
-        Obtençao de albums
-        """
-        albums = Album.objects.all()
+    def perform_create(self, serializer):
+        user = get_object_or_404(User, id=self.request.user.id)
 
-        result_page = self.paginate_queryset(albums, request)
-        serializer = AlbumSerializer(result_page, many=True)
-
-        return self.get_paginated_response(serializer.data)
-
-    def post(self, request):
-        """
-        Criaçao de album
-        """
-        serializer = AlbumSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
-
-        return Response(serializer.data, status.HTTP_201_CREATED)
+        serializer.save(user=user)

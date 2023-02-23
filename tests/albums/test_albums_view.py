@@ -1,5 +1,6 @@
 from rest_framework.test import APITestCase
 from rest_framework.views import status
+from rest_framework_simplejwt.tokens import RefreshToken
 from tests.factories import create_user_with_token, create_multiple_albums_with_user
 import ipdb
 
